@@ -1,1 +1,0 @@
-void self_moneyAdd(struct data* userData);

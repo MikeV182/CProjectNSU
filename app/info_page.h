@@ -1,1 +1,0 @@
-void infoPage(struct data* userData);

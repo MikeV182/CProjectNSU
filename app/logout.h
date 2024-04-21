@@ -1,1 +1,0 @@
-void logout(struct data* userData);

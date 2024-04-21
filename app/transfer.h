@@ -1,1 +1,0 @@
-void transfer_money(struct data* userFrom);
