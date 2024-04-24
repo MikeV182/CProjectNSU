@@ -33,7 +33,6 @@ struct btree_node *create_node() {
     return new_node;
 }
 
-
 void insert(struct btree_node *root, struct data *user);
 void split_child(struct btree_node *parent, int index, struct btree_node *child);
 void insert_nonfull(struct btree_node *node, struct data *user);
@@ -48,13 +47,11 @@ int main(void) {
     system("cls");
     struct btree_node *root = create_node();
 
-    // Пример добавления пользователей
     struct data user1 = {"user1", "password1", "John", "Doe", 1, 1, 1990, 1000};
     struct data user2 = {"user2", "password2", "Jane", "Doe", 2, 2, 1991, 2000};
     struct data user3 = {"user3", "password3", "Alice", "Smith", 3, 3, 1992, 15000};
     struct data user4 = {"user4", "password4", "Michail", "Vays", 13, 7, 2005, 0};
     struct data user5 = {"user5", "password5", "Mike", "Wazowsky", 3, 3, 2000, -200};
-
     insert(root, &user1);
     insert(root, &user2);
     insert(root, &user3);
@@ -228,12 +225,6 @@ void free_btree(struct btree_node *node) {
     }
     free(node);
 }
-
-
-
-
-
-
 
 int calculate_age(int day, int month, int year) {
     time_t now;
