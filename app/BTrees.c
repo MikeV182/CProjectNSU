@@ -106,10 +106,13 @@ void create_account(void) {
     system("cls");
     struct data userData;
     char ch;
-    printf("\n\n!!!CREATE ACCOUNT!!!");
-    printf("\n\nEnter your username.. ");
+    gotoxy(25, 4);
+    printf("!!!CREATE ACCOUNT!!!");
+    gotoxy(20, 6);
+    printf("Enter your username: ");
     scanf("%s", &userData.username);
-    printf("\n\nEnter your password.. ");
+    gotoxy(20, 8);
+    printf("Enter your password: ");
     for (int i = 0; i < 50; i++) {
         ch = getch();
         if (ch != 13) {
@@ -119,11 +122,14 @@ void create_account(void) {
         }
         else break;
     }
-    printf("\n\nEnter your first name: ");
+    gotoxy(20, 10);
+    printf("Enter your first name: ");
     scanf("%s", &userData.first_name);
-    printf("\n\nEnter your last name: ");
+    gotoxy(20, 12);
+    printf("Enter your last name: ");
     scanf("%s", &userData.last_name);
-    printf("\n\nEnter your date of birth(dd/mm/year): ");
+    gotoxy(20, 14);
+    printf("Enter your date of birth(dd/mm/year): ");
     scanf("%d/%d/%d", &userData.day, &userData.month, &userData.year);
     userData.money = 0;
     users[id_users++] = userData;
@@ -133,9 +139,11 @@ void create_account(void) {
 
 void account_created(void) {
     system("cls");
-    printf("\n\n__YOUR DATA IS PROCESSING__");
+    gotoxy(25, 4);
+    printf("__YOUR DATA IS PROCESSING__");
     Sleep(1500);
-    printf("\n\nCOMPLETED SUCCESSFULLY. Press any key to continue... ");
+    gotoxy(25, 6);
+    printf("COMPLETED SUCCESSFULLY. Press any key to continue... ");
     getch();
 
     login_page();
@@ -168,7 +176,7 @@ void login_page(void) {
     int found = 0; // should add some kind of a quicker search there
     for (int i = 0; i < id_users; i++) {
         if (strcmp(name_user, users[i].username) == 0 && strcmp(pass_user, users[i].password) == 0) {
-            gotoxy(25,11);
+            gotoxy(25,10);
             found = 1;
             printf("!!!LOGIN SUCCESSFULLY!!! (Any key to enter the bank system)");
             getch();
@@ -178,9 +186,9 @@ void login_page(void) {
         }
     }
     if (!found) {
-        gotoxy(25,11);
-        printf("Invalid username or password. Try again.\n\n");
-        Sleep(2000);
+        gotoxy(25, 10);
+        printf("Invalid username or password. Try again.");
+        Sleep(1500);
 
         login_page();
     }
@@ -188,19 +196,28 @@ void login_page(void) {
 
 void infoPage(struct data* userData) {
     system("cls");
-    printf("\n\n==WELCOME TO THE USER INFO PAGE==\n\n");
-    printf("Hello, %s %s!\n", userData->first_name, userData->last_name);
-    printf("1. View account balance\n");
-    printf("2. Add money to your account\n");
-    printf("3. B-Tree options\n");
-    printf("4. Logout\n");
+    gotoxy(25, 3);
+    printf("==WELCOME TO THE USER INFO PAGE==");
+    gotoxy(25, 6);
+    printf("Hello, %s %s!", userData->first_name, userData->last_name);
+    gotoxy(25, 8);
+    printf("1. View account balance");
+    gotoxy(25, 9);
+    printf("2. Add money to your account");
+    gotoxy(25, 10);
+    printf("3. B-Tree options");
+    gotoxy(25, 11);
+    printf("4. Logout");
+    gotoxy(25, 14);
     printf("Choose an option: ");
     int choice;
     scanf("%d", &choice);
 
     switch (choice) {
         case 1:
+            gotoxy(25, 16);
             printf("Your account balance: %lld$\n", userData->money);
+            gotoxy(25, 17);
             printf("Press any key to return to the user info page...");
             getch();
             infoPage(userData);
@@ -219,6 +236,7 @@ void infoPage(struct data* userData) {
             break;
 
         default:
+            gotoxy(25, 20);
             printf("Invalid option. Please try again.\n");
             break;
     }
@@ -226,11 +244,14 @@ void infoPage(struct data* userData) {
 
 void self_moneyAdd(struct data* userData) {
     system("cls");
+    gotoxy(20, 4);
     printf("Enter the amount of money to add: ");
     long long int amount;
     scanf("%lld", &amount);
     userData->money += amount;
+    gotoxy(20, 6);
     printf("Money added successfully.\n");
+    gotoxy(20, 7);
     printf("Press any key to return to the user info page...");
     getch();
 
@@ -239,7 +260,8 @@ void self_moneyAdd(struct data* userData) {
 
 void logout(void) {
     system("cls");
-    printf("Logging out...\n");
+    gotoxy(20, 4);
+    printf("Logging out...");
     Sleep(1500);
 
     main();
@@ -264,19 +286,19 @@ void btree(struct data *userData) {
         insert(root, &users[i]);
     }
 
-    gotoxy(25,3);
+    gotoxy(25,4);
     printf("=== THIS IS IMPLEMENTATION OF B-TREES ALGORITHM IN C ===");
-    gotoxy(20,5);
+    gotoxy(20,6);
     printf("Here are some options:");
-    gotoxy(20,7);
+    gotoxy(20,8);
     printf("1. User with maximum money on account");
     gotoxy(20,9);
     printf("2. Users with age [from] [to]");
-    gotoxy(20,11);
+    gotoxy(20,10);
     printf("3. Users with amount of money [starting] [ending]");
-    gotoxy(20,13);
+    gotoxy(20,11);
     printf("4. Users with nickname starting on [letter]");
-    gotoxy(20, 15);
+    gotoxy(20, 12);
     printf("5. Return to login info page");
 
     int choice, flag = 1;
@@ -326,8 +348,7 @@ void btree(struct data *userData) {
                 break;
 
             default:
-                gotoxy(25,21);
-                printf("\nYou entered a wrong number, dummy!\n\n");
+                printf("You entered a wrong number, dummy!\n\n");
                 break;
         }
     }
@@ -425,20 +446,6 @@ void find_max_money_user(struct btree_node *node, struct data **max_user, long l
         find_max_money_user(node->child[node->num_keys], max_user, max_money);
     }
 }
-
-// old version of this function that was causing crashes in my program because it frees keys separately
-/*
-void free_btree(struct btree_node *node) {
-    if (node == NULL) return;
-    for (int i = 0; i < node->num_keys; i++) {
-        free(node->keys[i]);
-    }
-    for (int i = 0; i <= node->num_keys; i++) {
-        free_btree(node->child[i]);
-    }
-    free(node);
-}
-*/
 
 void free_btree(struct btree_node *node) {
     if (node == NULL) return;
