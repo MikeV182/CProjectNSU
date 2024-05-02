@@ -53,6 +53,10 @@ void btree(struct data *userData) {
                 printf("Enter to age: ");
                 int to_age;
                 scanf("%d", &to_age);
+                if (from_age > to_age) {
+                    printf("Ages are incorrect, try again...\n");
+                    break;
+                }
                 printf("Users with age between %d and %d:\n", from_age, to_age);
                 print_users_with_age(root, from_age, to_age);
                 break;
@@ -64,6 +68,11 @@ void btree(struct data *userData) {
                 printf("Enter ending money: ");
                 long long int ending_money;
                 scanf("%lld", &ending_money);
+                if (starting_money > ending_money) {
+                    printf("Values are incorrect, try again...\n");
+                    break;
+
+                }
                 printf("Users with money between %lld and %lld:\n", starting_money, ending_money);
                 print_users_with_money(root, starting_money, ending_money);
                 break;

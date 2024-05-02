@@ -32,9 +32,16 @@ void create_account(void) {
     gotoxy(20, 14);
     printf("Enter your date of birth(dd/mm/year): ");
     scanf("%d/%d/%d", &userData.day, &userData.month, &userData.year);
+    if (!data_check(userData.day, userData.month, userData.year)) {
+        gotoxy(20,16);
+        printf("Your date of birth is incorrect, try again");
+        gotoxy(20,17);
+        printf("Any key to retry...");
+        getch();
+        create_account();
+    }
     userData.money = 0;
     users[id_users++] = userData;
-
     account_created();
 }
 

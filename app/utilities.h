@@ -31,6 +31,8 @@ int id_users;
 
 void gotoxy(int x, int y);
 int calculate_age(int day, int month, int year);
+int leap_year(int year);
+int data_check(int day, int month, int year);
 
 #endif /* UTILITIES_H */
 
