@@ -16,7 +16,9 @@ struct data {
     char password[50];
     char first_name[30];
     char last_name[30];
-    int day, month, year;
+    int day;
+    int month;
+    int year;
     long long int money;
 };
 

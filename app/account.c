@@ -80,8 +80,7 @@ void login_page(void) {
         }
         else break;
     }
-
-    int found = 0; // should add some kind of a quicker search there
+    int found = 0;
     for (int i = 0; i < id_users; i++) {
         if (strcmp(name_user, users[i].username) == 0 && strcmp(pass_user, users[i].password) == 0) {
             gotoxy(25,10);

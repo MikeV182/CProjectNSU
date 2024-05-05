@@ -1,18 +1,18 @@
 #include "main.h"
 
 int main(void) {
-    struct data user0 = {"user0", "password0", "John", "Doe", 1, 1, 1990, 1000};
+    struct data user0 = {"User0", "password0", "John", "Doe", 1, 1, 1990, 1000};
     struct data user1 = {"user1", "password1", "Jane", "Doe", 2, 2, 1991, 2000};
     struct data user2 = {"user2", "password2", "Alice", "Smith", 3, 3, 1992, 15000};
     struct data user3 = {"Mike", "Mike", "Michail", "Vays", 13, 7, 2005, 0};
-    struct data user4 = {"Wazowsky", "Wazowsky", "Mike", "Wazowsky", 3, 3, 2000, -200};
+    struct data user4 = {"Prodigy", "Prodigy", "Keith", "Flint", 17, 9, 1969, -200};
     users[0] = user0;
     users[1] = user1;
     users[2] = user2;
     users[3] = user3;
     users[4] = user4;
     id_users = 5;
-    
+
     system("cls");
     int choice;
     gotoxy(20, 3);
