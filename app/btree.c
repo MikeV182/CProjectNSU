@@ -15,12 +15,6 @@ struct btree_node *create_node() {
 
 void btree(struct data *userData) {
     system("cls");
-
-    struct btree_node *root = create_node();
-    for (int i = 0; i < id_users; ++i) {
-        insert(root, &users[i]);
-    }
-
     gotoxy(25,4);
     printf("=== THIS IS IMPLEMENTATION OF B-TREES ALGORITHM IN C ===");
     gotoxy(20,6);
@@ -38,12 +32,17 @@ void btree(struct data *userData) {
 
     int choice, flag = 1;
     while (flag) {
+        struct btree_node *root = create_node();
         printf("\n\nYour choice is: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
+                for (int i = 0; i < id_users; ++i) {
+                    insert(root, &users[i], "money");
+                }
                 print_max_money_users(root);
+                free_btree(root);
                 break;
 
             case 2:
@@ -57,8 +56,13 @@ void btree(struct data *userData) {
                     printf("Ages are incorrect, try again...\n");
                     break;
                 }
+
+                for (int i = 0; i < id_users; ++i) {
+                    insert(root, &users[i], "age");
+                }
                 printf("Users with age between %d and %d:\n", from_age, to_age);
                 print_users_with_age(root, from_age, to_age);
+                free_btree(root);
                 break;
 
             case 3:
@@ -73,53 +77,105 @@ void btree(struct data *userData) {
                     break;
 
                 }
+
+                for (int i = 0; i < id_users; ++i) {
+                    insert(root, &users[i], "money");
+                }
                 printf("Users with money between %lld and %lld:\n", starting_money, ending_money);
                 print_users_with_money(root, starting_money, ending_money);
+                free_btree(root);
                 break;
 
             case 4:
                 printf("Enter starting letter: ");
                 char starting_letter;
                 scanf(" %c", &starting_letter); // Пробел перед %c для пропуска пробелов и символов новой строки
+                for (int i = 0; i < id_users; ++i) {
+                    insert(root, &users[i], "username");
+                }
                 printf("Users with username starting with '%c':\n", starting_letter);
                 print_users_starting_with_letter(root, starting_letter);
+                free_btree(root);
                 break;
 
             case 5:
                 printf("\nRETURNING TO THE LOGIN INFO PAGE...");
                 Sleep(1500);
                 flag = 0;
+                free_btree(root);
                 break;
 
             default:
                 printf("You entered a wrong number, dummy!\n\n");
+                free_btree(root);
                 break;
         }
     }
-    free_btree(root);
     infoPage(userData);
 }
 
-void insert(struct btree_node *root, struct data *user) {
-    if (root->num_keys < MAX_KEYS) {
-        int i = root->num_keys - 1;
-        while (i >= 0 && strcmp(user->username, root->keys[i]->username) < 0) {
-            root->keys[i + 1] = root->keys[i];
-            i--;
+void insert(struct btree_node *root, struct data *user, char *key) {
+    if (strcmp(key, "username") == 0) {
+        if (root->num_keys < MAX_KEYS) {
+            int i = root->num_keys - 1;
+            while (i >= 0 && strcmp(user->username, root->keys[i]->username) < 0) {
+                root->keys[i + 1] = root->keys[i];
+                i--;
+            }
+            root->keys[i + 1] = user;
+            root->num_keys++;
+        } 
+        
+        else {
+            struct btree_node *new_root = create_node();
+            new_root->child[0] = root;
+            split_child(new_root, 0, root);
+            insert_nonfull(new_root, user, key);
         }
-        root->keys[i + 1] = user;
-        root->num_keys++;
-    } else {
-        struct btree_node *new_root = create_node();
-        new_root->child[0] = root;
-        split_child(new_root, 0, root);
-        insert_nonfull(new_root, user);
+    } 
+    
+    else if (strcmp(key, "money") == 0) {
+        if (root->num_keys < MAX_KEYS) {
+            int i = root->num_keys - 1;
+            while (i >= 0 && user->money < root->keys[i]->money) {
+                root->keys[i + 1] = root->keys[i];
+                i--;
+            }
+            root->keys[i + 1] = user;
+            root->num_keys++;
+        } 
+        
+        else {
+            struct btree_node *new_root = create_node();
+            new_root->child[0] = root;
+            split_child(new_root, 0, root);
+            insert_nonfull(new_root, user, key);
+        }
+    } 
+    
+    else if (strcmp(key, "age") == 0) {
+        if (root->num_keys < MAX_KEYS) {
+            int i = root->num_keys - 1;
+            while (i >= 0 && calculate_age(user->day, user->month, user->year) < calculate_age(root->keys[i]->day, root->keys[i]->month, root->keys[i]->year)) {
+                root->keys[i + 1] = root->keys[i];
+                i--;
+            }
+            root->keys[i + 1] = user;
+            root->num_keys++;
+        } 
+        
+        else {
+            struct btree_node *new_root = create_node();
+            new_root->child[0] = root;
+            split_child(new_root, 0, root);
+            insert_nonfull(new_root, user, key);
+        }
     }
 }
 
 void split_child(struct btree_node *parent, int index, struct btree_node *child) {
     struct btree_node *new_child = create_node();
-    new_child->num_keys = MAX_KEYS / 2;
+    new_child->num_keys = MAX_KEYS / 2; //делим на 2 чтобы дерево было сбалансированным
 
     for (int i = 0; i < MAX_KEYS / 2; i++) {
         new_child->keys[i] = child->keys[i + MAX_KEYS / 2];
@@ -140,27 +196,81 @@ void split_child(struct btree_node *parent, int index, struct btree_node *child)
     child->num_keys = MAX_KEYS / 2;
 }
 
-void insert_nonfull(struct btree_node *node, struct data *user) {
+void insert_nonfull(struct btree_node *node, struct data *user, char *key) {
     int i = node->num_keys - 1;
-    if (node->child[0] == NULL) {
-        while (i >= 0 && strcmp(user->username, node->keys[i]->username) < 0) {
-            node->keys[i + 1] = node->keys[i];
-            i--;
-        }
-        node->keys[i + 1] = user;
-        node->num_keys++;
-    } else {
-        while (i >= 0 && strcmp(user->username, node->keys[i]->username) < 0) {
-            i--;
-        }
-        i++;
-        if (node->child[i]->num_keys == MAX_KEYS) {
-            split_child(node, i, node->child[i]);
-            if (strcmp(user->username, node->keys[i]->username) > 0) {
-                i++;
+    if (strcmp(key, "username") == 0) {
+        if (node->child[0] == NULL) {
+            while (i >= 0 && strcmp(user->username, node->keys[i]->username) < 0) {
+                node->keys[i + 1] = node->keys[i];
+                i--;
             }
+            node->keys[i + 1] = user;
+            node->num_keys++;
+        } 
+        
+        else {
+            while (i >= 0 && strcmp(user->username, node->keys[i]->username) < 0) {
+                i--;
+            }
+            i++;
+            if (node->child[i]->num_keys == MAX_KEYS) {
+                split_child(node, i, node->child[i]);
+                if (strcmp(user->username, node->keys[i]->username) > 0) {
+                    i++;
+                }
+            }
+            insert_nonfull(node->child[i], user, key);
         }
-        insert_nonfull(node->child[i], user);
+    } 
+    
+    else if (strcmp(key, "money") == 0) {
+        if (node->child[0] == NULL) {
+            while (i >= 0 && user->money < node->keys[i]->money) {
+                node->keys[i + 1] = node->keys[i];
+                i--;
+            }
+            node->keys[i + 1] = user;
+            node->num_keys++;
+        } 
+        
+        else {
+            while (i >= 0 && user->money < node->keys[i]->money) {
+                i--;
+            }
+            i++;
+            if (node->child[i]->num_keys == MAX_KEYS) {
+                split_child(node, i, node->child[i]);
+                if (user->money > node->keys[i]->money) {
+                    i++;
+                }
+            }
+            insert_nonfull(node->child[i], user, key);
+        }
+    } 
+    
+    else if (strcmp(key, "age") == 0) {
+        if (node->child[0] == NULL) {
+            while (i >= 0 && calculate_age(user->day, user->month, user->year) < calculate_age(node->keys[i]->day, node->keys[i]->month, node->keys[i]->year)) {
+                node->keys[i + 1] = node->keys[i];
+                i--;
+            }
+            node->keys[i + 1] = user;
+            node->num_keys++;
+        } 
+        
+        else {
+            while (i >= 0 && calculate_age(user->day, user->month, user->year) < calculate_age(node->keys[i]->day, node->keys[i]->month, node->keys[i]->year)) {
+                i--;
+            }
+            i++;
+            if (node->child[i]->num_keys == MAX_KEYS) {
+                split_child(node, i, node->child[i]);
+                if (calculate_age(user->day, user->month, user->year) > calculate_age(node->keys[i]->day, node->keys[i]->month, node->keys[i]->year)) {
+                    i++;
+                }
+            }
+            insert_nonfull(node->child[i], user, key);
+        }
     }
 }
 
@@ -173,7 +283,9 @@ void print_max_money_users(struct btree_node *root) {
         printf("User with maximum money on account:\n");
         printf("Username: %s\n", max_user->username);
         printf("Money: %lld\n", max_user->money);
-    } else {
+    } 
+    
+    else {
         printf("No users found.\n");
     }
 }

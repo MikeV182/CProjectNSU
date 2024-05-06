@@ -37,4 +37,3 @@ int leap_year(int year);
 int data_check(int day, int month, int year);
 
 #endif /* UTILITIES_H */
-

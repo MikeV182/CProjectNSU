@@ -145,6 +145,8 @@ void infoPage(struct data* userData) {
         default:
             gotoxy(25, 20);
             printf("Invalid option. Please try again.\n");
+            getch();
+            infoPage(userData);
             break;
     }
 }
