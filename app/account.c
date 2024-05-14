@@ -40,7 +40,7 @@ void create_account(void) {
         getch();
         create_account();
     }
-    userData.money = 0;
+    userData.money = 500;
     users[id_users++] = userData;
     account_created();
 }

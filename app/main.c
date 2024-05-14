@@ -1,17 +1,15 @@
 #include "main.h"
 
 int main(void) {
-    struct data user0 = {"User0", "password0", "John", "Doe", 1, 1, 1990, 1000};
-    struct data user1 = {"user1", "password1", "Jane", "Doe", 2, 2, 1991, 2000};
-    struct data user2 = {"user2", "password2", "Alice", "Smith", 3, 3, 1992, 15000};
-    struct data user3 = {"Mike", "Mike", "Michail", "Vays", 13, 7, 2005, 0};
-    struct data user4 = {"Prodigy", "Prodigy", "Keith", "Flint", 17, 9, 1969, -200};
+    struct data user0 = {"Blink182", "Blink182", "Travis", "Barker", 14, 11, 1975, 1000};
+    struct data user1 = {"Prodigy", "Prodigy", "Keith", "Flint", 17, 9, 1969, 3800};
+    struct data user2 = {"Aerosmith", "Aerosmith", "Steven", "Tyler", 26, 3, 1948, 15000};
+    struct data user3 = {"Mike", "Mike", "Michail", "Vays", 13, 7, 2005, 35};
     users[0] = user0;
     users[1] = user1;
     users[2] = user2;
     users[3] = user3;
-    users[4] = user4;
-    id_users = 5;
+    id_users = 4;
 
     system("cls");
     int choice;

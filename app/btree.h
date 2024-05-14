@@ -15,5 +15,6 @@ void print_users_with_age(struct btree_node *root, int from_age, int to_age);
 void print_users_with_money(struct btree_node *root, long long int starting_money, long long int ending_money);
 void print_users_starting_with_letter(struct btree_node *root, char letter);
 void free_btree(struct btree_node *node);
+void print_btree(struct btree_node *root, int level);
 
 #endif /* BTREE_H */

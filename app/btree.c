@@ -89,7 +89,7 @@ void btree(struct data *userData) {
             case 4:
                 printf("Enter starting letter: ");
                 char starting_letter;
-                scanf(" %c", &starting_letter); // Пробел перед %c для пропуска пробелов и символов новой строки
+                scanf(" %c", &starting_letter);
                 for (int i = 0; i < id_users; ++i) {
                     insert(root, &users[i], "username");
                 }
@@ -115,79 +115,28 @@ void btree(struct data *userData) {
 }
 
 void insert(struct btree_node *root, struct data *user, char *key) {
-    if (strcmp(key, "username") == 0) {
-        if (root->num_keys < MAX_KEYS) {
-            int i = root->num_keys - 1;
-            while (i >= 0 && strcmp(user->username, root->keys[i]->username) < 0) {
-                root->keys[i + 1] = root->keys[i];
-                i--;
-            }
-            root->keys[i + 1] = user;
-            root->num_keys++;
-        } 
-        
-        else {
-            struct btree_node *new_root = create_node();
-            new_root->child[0] = root;
-            split_child(new_root, 0, root);
-            insert_nonfull(new_root, user, key);
-        }
-    } 
-    
-    else if (strcmp(key, "money") == 0) {
-        if (root->num_keys < MAX_KEYS) {
-            int i = root->num_keys - 1;
-            while (i >= 0 && user->money < root->keys[i]->money) {
-                root->keys[i + 1] = root->keys[i];
-                i--;
-            }
-            root->keys[i + 1] = user;
-            root->num_keys++;
-        } 
-        
-        else {
-            struct btree_node *new_root = create_node();
-            new_root->child[0] = root;
-            split_child(new_root, 0, root);
-            insert_nonfull(new_root, user, key);
-        }
-    } 
-    
-    else if (strcmp(key, "age") == 0) {
-        if (root->num_keys < MAX_KEYS) {
-            int i = root->num_keys - 1;
-            while (i >= 0 && calculate_age(user->day, user->month, user->year) < calculate_age(root->keys[i]->day, root->keys[i]->month, root->keys[i]->year)) {
-                root->keys[i + 1] = root->keys[i];
-                i--;
-            }
-            root->keys[i + 1] = user;
-            root->num_keys++;
-        } 
-        
-        else {
-            struct btree_node *new_root = create_node();
-            new_root->child[0] = root;
-            split_child(new_root, 0, root);
-            insert_nonfull(new_root, user, key);
-        }
+    if (root->num_keys == MAX_KEYS) { // Check if the root is full
+        struct btree_node *new_root = create_node(); // Create a new root
+        new_root->child[0] = root; // Make the current root a child of the new root
+        split_child(new_root, 0, root); // Split the full root
+        insert_nonfull(new_root, user, key); // Insert the user into the newly created root
+    } else {
+        insert_nonfull(root, user, key); // Insert the user into the non-full root
     }
 }
 
 void split_child(struct btree_node *parent, int index, struct btree_node *child) {
     struct btree_node *new_child = create_node();
-    new_child->num_keys = MAX_KEYS / 2; //делим на 2 чтобы дерево было сбалансированным
-
+    new_child->num_keys = MAX_KEYS / 2;
     for (int i = 0; i < MAX_KEYS / 2; i++) {
         new_child->keys[i] = child->keys[i + MAX_KEYS / 2];
         new_child->child[i] = child->child[i + MAX_KEYS / 2];
     }
     new_child->child[MAX_KEYS / 2] = child->child[MAX_KEYS];
-
     for (int i = parent->num_keys; i > index; i--) {
         parent->child[i + 1] = parent->child[i];
     }
     parent->child[index + 1] = new_child;
-
     for (int i = parent->num_keys - 1; i >= index; i--) {
         parent->keys[i + 1] = parent->keys[i];
     }
@@ -345,5 +294,21 @@ void print_users_starting_with_letter(struct btree_node *root, char letter) {
     }
     for (int i = 0; i <= root->num_keys; i++) {
         print_users_starting_with_letter(root->child[i], letter);
+    }
+}
+
+// for testing purposes
+void print_btree(struct btree_node *root, int level) {
+    if (root != NULL) {
+        int i;
+        for (i = 0; i < root->num_keys; i++) {
+            print_btree(root->child[i], level + 1);
+            printf("\n");
+            for (int j = 0; j < level; j++) {
+                printf("    ");
+            }
+            printf("%s\n", root->keys[i]->username);
+        }
+        print_btree(root->child[i], level + 1);
     }
 }
